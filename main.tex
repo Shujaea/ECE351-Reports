@@ -1,0 +1,352 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% DOCUMENT PREAMBLE %%%
+\documentclass[12pt]{report}
+\usepackage[english]{babel}
+%\usepackage{natbib}
+\usepackage{url}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\graphicspath{{images/}}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+\usepackage{vmargin}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codeblue}{rgb}{0,0,0.95}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{codeblue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codegreen},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+ 
+\lstset{style=mystyle}
+
+\setmarginsrb{3 cm}{2.5 cm}{3 cm}{2.5 cm}{1 cm}{1.5 cm}{1 cm}{1.5 cm}
+
+\title{Lab4}								
+% Title
+\author{ Shujaea Aldousari}						
+% Author
+\date{Sep 29, 2021}
+% Date
+
+\makeatletter
+\let\thetitle\@title
+\let\theauthor\@author
+\let\thedate\@date
+\makeatother
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\theauthor}
+\lhead{\thetitle}
+\cfoot{\thepage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{titlepage}
+	\centering
+    \vspace*{0.5 cm}
+   % \includegraphics[scale = 0.075]{bsulogo.png}\\[1.0 cm]	% University Logo
+\begin{center}    \textsc{\Large   ECE 351 - Section 52 \# }\\[2.0 cm]	\end{center}% University of Idaho
+	\textsc{\Large Lab 4 Report  }\\[0.5 cm]				% Course Code
+	\rule{\linewidth}{0.2 mm} \\[0.4 cm]
+	{ \huge \bfseries \thetitle}\\
+	\rule{\linewidth}{0.2 mm} \\[1.5 cm]
+	
+	\begin{minipage}{0.4\textwidth}
+		\begin{flushleft} \large
+		%	\emph{Submitted To:}\\
+		%	Name\\
+          % Affiliation\\
+           %contact info\\
+			\end{flushleft}
+			\end{minipage}~
+			\begin{minipage}{0.4\textwidth}
+            
+			\begin{flushright} \large
+			\emph{Submitted By :} \\
+			Shujaea Aldousari  
+		\end{flushright}
+           
+	\end{minipage}\\[2 cm]
+	
+%	\includegraphics[scale = 0.5]{PICMathLogo.png}
+    
+    
+    
+    
+	
+\end{titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tableofcontents
+\pagebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\thesection}{\arabic{section}}
+\section{Introduction}
+ 
+
+In this lab, we were introduced with system step response as well as keep continue working on convolution.
+
+
+
+
+\section{Part 1}
+
+We were asked to create a signals by using the user defined function. In this lab, we had 3 signals which they are
+h1(t) = e −2t [u(t) − u(t − 3)] 
+h2(t) = u(t − 2) − u(t − 6) 
+h3(t) = cos(ω0t)u(t)
+We created the codes and plotted the 3 functions in a single figure, with step of −10 ≤ t ≤ 10, after running the code. Will have a three functions that contains the following a graph of h1,h2 and h3.
+
+
+
+
+
+\begin{lstlisting}[language=Python]
+
+import numpy as np
+import matplotlib . pyplot as plt
+import math
+
+
+steps = 1e-2 # Define step size
+t = np. arange (-10, 10 + steps , steps ) 
+
+# user defined function
+def step (t): 
+    y = np. zeros (t. shape ) 
+    for i in range ( len (t)): 
+        if t[i] >= 0:  
+            y[i] = 1
+        else:
+            y[i] = 0
+    return y 
+
+def ramp (t): 
+    y = np. zeros (t. shape ) 
+    for i in range ( len (t)): 
+        if t[i] >= 0:  
+            y[i] = t[i]
+        else:
+            y[i] = 0
+    return y 
+
+def h1(t):
+    y = np.exp(-2*t) *(step (t) - step (t-3))
+    return y
+
+def h2(t):
+    y = step (t-2) - step (t-6)
+    return y
+
+def h3(t):
+    y =  np.cos(2 * math.pi *0.25 *t) * step (t)
+    return y
+
+plt. figure ( figsize = (10 , 7))
+plt. subplot (3, 1, 1)
+plt. plot (t, h1(t))
+plt. grid ()
+plt. ylabel ('h1(t)')
+plt. title (' Task 1')
+plt. subplot (3, 1, 2)
+plt. plot (t, h2(t))
+plt. grid ()
+plt. ylabel ('h2(t)')
+plt. subplot (3, 1, 3)
+plt. plot (t, h3(t))
+plt. grid ()
+plt. ylabel ('h3(t)')
+plt. xlabel ('t')
+
+plt. show ()
+
+
+
+
+\end{lstlisting}
+
+\includegraphics{1.png}
+
+\section{Part 2 }
+
+We were asked to plot step responses of the 3 functions that we used in the previous part. The code for the convolution part has been edited. After creating the codes, we had 6 graphs as shown in the results. We also used the built-in convolution to check the results that we made.
+
+\begin{lstlisting}[language=Python]
+import numpy as np
+import matplotlib . pyplot as plt
+import math
+import scipy . signal as sig
+
+
+steps = 1e-2 # Define step size
+t = np. arange (-10, 10 + steps , steps ) 
+w0 = 2 * math.pi *0.25 
+
+# user defined function
+def step (t): 
+    y = np. zeros (t. shape ) 
+    for i in range ( len (t)): 
+        if t[i] >= 0:  
+            y[i] = 1
+        else:
+            y[i] = 0
+    return y 
+
+def ramp (t): 
+    y = np. zeros (t. shape ) 
+    for i in range ( len (t)): 
+        if t[i] >= 0:  
+            y[i] = t[i]
+        else:
+            y[i] = 0
+    return y 
+
+def h1(t):
+    y = np.exp(-2*t) *(step (t) - step (t-3))
+    return y
+
+def h2(t):
+    y = step (t-2) - step (t-6)
+    return y
+
+def h3(t):
+    y =  np.cos(w0 *t) * step (t)
+    return y
+
+def conv(fu1, fu2):
+    conf1 = len (fu1 )
+    conf2 = len (fu2 )
+    f1E = np. append (fu1 , np. zeros ((1 , conf2 -1) ))
+    f2E = np. append (fu2 , np. zeros ((1 , conf1 -1) ))
+    Value = np. zeros (f1E . shape )
+    for i in range ( conf2 + conf1 - 2):
+        Value [i] = 0
+        for j in range ( conf1 ):
+            if(i - j + 1 > 0):
+                Value [i] += f1E [j]* f2E [i - j + 1]
+    return Value
+
+y1 = conv(h1(t),step (t)) #user-created convolution
+Y1 = sig.convolve(h1(t),step (t)) #Built-in convolution
+
+y2 = conv(h2(t),step (t)) #user-created convolution
+Y2 = sig.convolve(h2(t),step (t)) #Built-in convolution
+
+y3 = conv(h3(t),step (t)) #user-created convolution
+Y3 = sig.convolve(h3(t),step (t)) #Built-in convolution
+
+t = np.linspace(-10, 10, len(y1))
+
+
+plt. figure ( figsize = (10 , 7))
+plt. subplot (2, 1, 1)
+plt. plot (t, y1)
+plt. grid ()
+plt. ylabel ('y1(t)')
+plt. title (' First responce')
+plt. subplot (2, 1, 2)
+plt. plot (t, Y1)
+plt. grid ()
+plt. ylabel ('Y1(t)')
+plt. xlabel ('t')
+
+plt. figure ( figsize = (10 , 7))
+plt. subplot (2, 1, 1)
+plt. plot (t, y2)
+plt. grid ()
+plt. ylabel ('y2(t)')
+plt. title (' Second responce')
+plt. subplot (2, 1, 2)
+plt. plot (t, Y2)
+plt. grid ()
+plt. ylabel ('Y2(t)')
+plt. xlabel ('t')
+
+plt. figure ( figsize = (10 , 7))
+plt. subplot (2, 1, 1)
+plt. plot (t, y3)
+plt. grid ()
+plt. ylabel ('y3(t)')
+plt. title (' Third responce')
+plt. subplot (2, 1, 2)
+plt. plot (t, Y3)
+plt. grid ()
+plt. ylabel ('Y3(t)')
+plt. xlabel ('t')
+
+#hand Calculated step responce
+y1c = 0.5 * (1 - np.exp(-2*t)) * (step (t) - step (t-3)) + 0.5 * step (t-3)
+y2c = (t-2) * (step (t-2) - step (t-6)) + 4 * step (t-6)
+y3c = np.cos(w0 *t) * step (t) / w0
+
+plt. figure ( figsize = (10 , 7))
+plt. subplot (3, 1, 1)
+plt. plot (t, y1c)
+plt. grid ()
+plt. ylabel ('y1c(t)')
+plt. title (' Step Respnoce (Hand Calculated)')
+plt. subplot (3, 1, 2)
+plt. plot (t, y2c)
+plt. grid ()
+plt. ylabel ('y2c(t)')
+plt. subplot (3, 1, 3)
+plt. plot (t, y3c)
+plt. grid ()
+plt. ylabel ('y3c(t)')
+plt. xlabel ('t')
+
+plt. show ()
+
+\end{lstlisting}
+
+\includegraphics{2.png}
+\includegraphics{3.png}
+\includegraphics{4.png}
+
+
+\section{Questions}
+
+Leave any feedback on the clarity of lab tasks, expectations, and deliverable.
+This lab gives a solid idea about the transfer functions and step response as well as how we compute it in the step responses.
+
+
+
+\section{conclusion}
+
+
+Overall, the main idea of this lab to introduce the transfer functions as well as to be more familiar with convolution.
+
+\newpage
+
+
+
+\end{document}
+
+%This template was created by Roza Aceska.
