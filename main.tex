@@ -43,11 +43,11 @@
 
 \setmarginsrb{3 cm}{2.5 cm}{3 cm}{2.5 cm}{1 cm}{1.5 cm}{1 cm}{1.5 cm}
 
-\title{Lab5}								
+\title{Lab6}								
 % Title
 \author{ Shujaea Aldousari}						
 % Author
-\date{Oct 6, 2021}
+\date{Oct 13, 2021}
 % Date
 
 \makeatletter
@@ -71,7 +71,7 @@
     \vspace*{0.5 cm}
    % \includegraphics[scale = 0.075]{bsulogo.png}\\[1.0 cm]	% University Logo
 \begin{center}    \textsc{\Large   ECE 351 - Section 52 \# }\\[2.0 cm]	\end{center}% University of Idaho
-	\textsc{\Large Lab 5 Report  }\\[0.5 cm]				% Course Code
+	\textsc{\Large Lab 6 Report  }\\[0.5 cm]				% Course Code
 	\rule{\linewidth}{0.2 mm} \\[0.4 cm]
 	{ \huge \bfseries \thetitle}\\
 	\rule{\linewidth}{0.2 mm} \\[1.5 cm]
@@ -111,14 +111,14 @@
 \section{Introduction}
  
 
-In this lab, we worked on Step and Impulse Response of a RLC Band Pass Filter and we learned in how to use Laplace transform, Since we were given the function that’s on the pre-lab, it helped us to find the impulse response. In the pre-lab, It is clear that I used a cosin function which has not been used, however I used the function H(s) that was given.
+In this lab, we learned about how to use scipy.signal.residue() functions which it helped us to perform the partial fraction expansion, Also it was the main purpose of this lab. Before the lab, we were asked to work on the pre-lab in order to find the transfer function. Next, we had to find the output 
 
 
 
 
 \section{Part 1}
 
-By using the pre-lab function that were given, we were able to create our user defined function in order to get the impulse response and built in functions. They both have the same results as showing in below.
+We were asked to find/plot our user defined function based on the lab Manuel as well as with a help of the function we found in the pre-lab. For the next task, we were asked to get the plot from the step response function we found in the pre-lab by using the scipy.signal.residue(). We compared the hand calculated with the step response and as shown in the plots. Finally, in the last task we were asked to get the residue function to get partial fraction expanstion for the Y(s) function that we did in the pre-lab. The results of R,P,K as attached below 
 
 
 
@@ -128,16 +128,12 @@ By using the pre-lab function that were given, we were able to create our user d
 
 
 
-
 import numpy as np
 import matplotlib . pyplot as plt
 import scipy . signal as sig
 
-steps = 1e-6 # Define step size
-t = np. arange (0, 1.2e-3 + steps , steps ) 
-R = 1e3
-L= 27e-3
-C= 100e-9
+steps = 1e-2 # Define step size
+t = np. arange (0, 2 + steps , steps ) 
 
 # user defined function
 def step (t): 
@@ -148,34 +144,38 @@ def step (t):
         else:
             y[i] = 0
     return y 
-
-def h(R, L, C, t):
-    Alpha = -1 / (2 * R * C)
-    w = 0.5 * np.sqrt(((1/(R*C))**2) - 4/(L*C) + 0*1j)
-    P = Alpha + w 
-    g = P / (R*C)
-    gMag = np.abs(g)
-    gRad = np.angle(g)
-    y = (gMag / np.abs(w)) * np.exp(Alpha*t) * np.sin(np.abs(w) * t + gRad) * step (t) 
+#Part 1
+#Task 1
+def yt(t):
+    y = (0.5 - 0.5 * np.exp(-4*t) + np.exp(-6*t)) * step (t) 
     return y
-
-num = [0, 1e4 , 0]
-den = [1, 1e4 , 370.4e6]
-tout, hout = sig. impulse (( num , den), T = t)
+#Task 2
+numH = [1, 6 , 12]
+denH = [1, 10 , 24]
+tout, yout = sig. step (( numH , denH), T = t)
 
 plt. figure ( figsize = (10 , 7))
 plt. subplot (2, 1, 1)
-plt. plot (t, h(R, L, C, t))
+plt. plot (t, yt(t))
 plt. grid ()
-plt. ylabel ('h1(t)')
-plt. title (' Impulse responce')
+plt. ylabel ('Hand Calculated')
+plt. title (' Step Responce y(t)')
 plt. subplot (2, 1, 2)
-plt. plot (tout, hout)
+plt. plot (tout, yout)
 plt. grid ()
-plt. ylabel ('h2(t)')
+plt. ylabel ('Built-in')
 plt. xlabel ('t')
 
-plt. show ()
+#Task 3
+numY = [1, 6 , 12]
+denY = [1, 10 , 24, 0]
+R, P, K = sig.residue(numY , denY)
+print("R= ", R)
+print("P= ", P)
+print("K= ", K)
+
+
+
 
 
 
@@ -184,29 +184,48 @@ plt. show ()
 \end{lstlisting}
 
 \includegraphics{1.png}
-
+\includegraphics{output part1.png}
 \section{Part 2 }
 
-In part 2, we had to get the step response of the circuit then, we compute the final value theorem of the step response after that we compare this results with that found in part 1. 
+In part 2, we were still working on the residue function to perform partial fraction expansion.  
 
 \begin{lstlisting}[language=Python]
-import numpy as np
-import matplotlib . pyplot as plt
-import scipy . signal as sig
 
-steps = 1e-6 # Define step size
-t = np. arange (0, 1.2e-3 + steps , steps ) 
+#Part 2
+#Task 1
+numY2 = 25250
+denY2 = [1, 18, 218, 2036, 9085, 25250, 0]
+R2, P2, K2 = sig.residue(numY2 , denY2)
+print("R2= ", R2)
+print("P2= ", P2)
+print("K2= ", K2)
 
+#Task 2
+t = np. arange (0, 4.5 + steps , steps ) 
+L = len(R2) 
+y2 = np. zeros(t. shape)
+for i in range (L):
+    MAG_R = np.abs(R2[i])
+    Ang_R = np.angle(R2[i])
+    Real_P = P2[i].real
+    Img_P = P2[i].imag
+    y2 += MAG_R * np.exp(Real_P*t) * np.cos(Img_P*t + Ang_R) *step(t)
 
-num = [0, 1e4 , 0]
-den = [1, 1e4 , 370.4e6]
-tout, yout = sig. step (( num , den), T = t)
+#Task 3
+numH2 = 25250
+denH2 = [1, 18, 218, 2036, 9085, 25250]
+tout2, yout2 = sig. step (( numH2 , denH2), T = t)
 
 plt. figure ( figsize = (10 , 7))
-plt. plot (tout, yout)
+plt. subplot (2, 1, 1)
+plt. plot (t, y2)
 plt. grid ()
-plt. title (' Step responce')
-plt. ylabel ('y(t)')
+plt. ylabel ('Hand Calculated')
+plt. title (' Step Responce y(t)')
+plt. subplot (2, 1, 2)
+plt. plot (tout2, yout2)
+plt. grid ()
+plt. ylabel ('Built-in')
 plt. xlabel ('t')
 
 plt. show ()
@@ -215,14 +234,21 @@ plt. show ()
 \end{lstlisting}
 
 \includegraphics{2.png}
+\includegraphics{output part2.png}
+
 
 
 
 \section{Questions}
-Q1: Explain the result of the Final Value Theorem from Part 2 Task 2 in terms of the physical
-circuit components.
-At t= infinity, the capacitor will be open circuit and the inductor will act short circuit. Then the voltage Vout is parallel with the inductor which is equal to zero. which agrees with the final value theorem which is equal to zero.  
+1. For a non-complex pole-residue term, you can still use the cosine method, explain why this
+works.
 
+2. Leave any feedback on the clarity of the expectations, instructions, and deliverables. 
+
+Q1. for non-complex residue, we will get the magnitude and the angle. The magnitude will be positive and for the angle we have two options. The angle 0 for positive number, and angle 180 for negative number. However for cos method, cos zero will be positive and cos 180 will be negative.
+for non-complex pole, we will get the real and imaginary parts. The real part will be the non-complex pole but the imaginary part will be zero and cos zero equal 1. Therefore, non-complex pole residue can be obtain by using cos method.
+
+overall, the lab was clear enough and easy to work with. 
 
 
 
@@ -230,7 +256,7 @@ At t= infinity, the capacitor will be open circuit and the inductor will act sho
 \section{conclusion}
 
 
-The main purpose of this lab is how to use and be familiar with Laplace transform. By creating the user defined for the impulse response after that we check the result with the result that are generated by using the impulse built in function. The step response of the circuit is generated by using step built in function then the final value thermos of the step response was calculated and the result agreed with the result of part 1.
+In this lab, we learned how to use the residue function built in python. At the beginning of this lab, we plotted step response for the pre-lab system then we used step built in function for the same system as the pre-lab, also we make sure the plot we had in task 1 is same as task 2. After that, we used the residue function to find the partial fraction expansion and we check that the values we obtain in pre-lab are the same as the values we obtain by the residue function. Next, we used the residue function to get the partial fraction expansion for a complex system. Then we used these values to plot the step response for the complex system by using cos method. Finally, we used the step response to check the plot of the step response for task 2, and we ensure that the two plots are the same.
 
 \newpage
 
