@@ -43,11 +43,11 @@
 
 \setmarginsrb{3 cm}{2.5 cm}{3 cm}{2.5 cm}{1 cm}{1.5 cm}{1 cm}{1.5 cm}
 
-\title{Lab6}								
+\title{Lab7}								
 % Title
 \author{ Shujaea Aldousari}						
 % Author
-\date{Oct 13, 2021}
+\date{Oct 20, 2021}
 % Date
 
 \makeatletter
@@ -71,7 +71,7 @@
     \vspace*{0.5 cm}
    % \includegraphics[scale = 0.075]{bsulogo.png}\\[1.0 cm]	% University Logo
 \begin{center}    \textsc{\Large   ECE 351 - Section 52 \# }\\[2.0 cm]	\end{center}% University of Idaho
-	\textsc{\Large Lab 6 Report  }\\[0.5 cm]				% Course Code
+	\textsc{\Large Lab 7 Report  }\\[0.5 cm]				% Course Code
 	\rule{\linewidth}{0.2 mm} \\[0.4 cm]
 	{ \huge \bfseries \thetitle}\\
 	\rule{\linewidth}{0.2 mm} \\[1.5 cm]
@@ -111,14 +111,45 @@
 \section{Introduction}
  
 
-In this lab, we learned about how to use scipy.signal.residue() functions which it helped us to perform the partial fraction expansion, Also it was the main purpose of this lab. Before the lab, we were asked to work on the pre-lab in order to find the transfer function. Next, we had to find the output 
+The main purpose of this lab is to be familiar with Laplace-domain block diagrams and use the factored form of the transfer
+function to judge system stability. During this lab, we had to work and solve by hand and compare it with the work that's been done using Python. 
 
 
 
 
 \section{Part 1}
+\begin{itemize1}
+    \item//
+    
+    In the first task, We found the poles and the zeros at s1=8, s2=-2 and s3=-4. Then, for zeros it is resulted at z1=-9 with the following equations.
 
-We were asked to find/plot our user defined function based on the lab Manuel as well as with a help of the function we found in the pre-lab. For the next task, we were asked to get the plot from the step response function we found in the pre-lab by using the scipy.signal.residue(). We compared the hand calculated with the step response and as shown in the plots. Finally, in the last task we were asked to get the residue function to get partial fraction expanstion for the Y(s) function that we did in the pre-lab. The results of R,P,K as attached below 
+$G(s)= (s+9)/(s^2-6s-16)(s+4))= ((s+9))/((s-8)(s+2)(s+4))
+
+ A(s)= (s+4)/((s^2+4s+3))=  (s+4)/((s+1)(s+3))
+
+ $B(s)= s2+26s+168=(s+12)(s+14)
+\end{itemize1}
+
+\begin{itemize2}
+    \item//
+For the next task, we were asked to get and Analyze the block diagram and perform it by using  Python. After that, we checked the poles and the zeros which they were the same.
+
+For task 3, The open loop system has no feedback, so it will be 
+
+ H(s) = (Y(s))/(X(s))=A(s).G(s)
+= ((s+4))/((s+1)(s+3))  .((s+9))/((s-8)(s+6)(s+2))
+
+Task 4: The open loop system is not stable because it has a pole at the right side of s-plane.(s=8)
+
+
+In task 5, we were asked to plot the step response of the open-loop transfer function by using scipy.signal.convolve() which answers the next task after plotting it. After the plot, we can see that the result from the previous task support the answer of task 4. From the figure, it is showing that the step response is increasing with time and there is no limit for this increasing. Hence, the response may reach infinity. so, the system is not stable.
+\end{itemize2}
+
+    
+
+
+
+
 
 
 
@@ -127,56 +158,45 @@ We were asked to find/plot our user defined function based on the lab Manuel as 
 \begin{lstlisting}[language=Python]
 
 
-
 import numpy as np
 import matplotlib . pyplot as plt
 import scipy . signal as sig
 
-steps = 1e-2 # Define step size
-t = np. arange (0, 2 + steps , steps ) 
+steps = 1e-4 # Define step size
+t = np. arange (0, 10 + steps , steps ) # Add a step size to make sure the
 
-# user defined function
-def step (t): 
-    y = np. zeros (t. shape ) 
-    for i in range ( len (t)): 
-        if t[i] >= 0:  
-            y[i] = 1
-        else:
-            y[i] = 0
-    return y 
 #Part 1
-#Task 1
-def yt(t):
-    y = (0.5 - 0.5 * np.exp(-4*t) + np.exp(-6*t)) * step (t) 
-    return y
 #Task 2
-numH = [1, 6 , 12]
-denH = [1, 10 , 24]
-tout, yout = sig. step (( numH , denH), T = t)
+numG = [1,9]
+denG = [1,-2,-40,-64]
+ZG, PG, KG = sig.tf2zpk(numG, denG)
+
+numA = [1,4]
+denA = [1,4,3]
+ZA, PA, KA = sig.tf2zpk(numA, denA)
+
+numB = [1, 26, 168]
+ZB = np.roots(numB)
+
+print("Poles of G= ", PG)
+print("Zeros of G= ", ZG)
+print("Poles of A= ", PA)
+print("Zeros of A= ", ZA)
+print("Zeros of B= ", ZB)
+
+#Task 5
+num = sig . convolve (numG, numA)
+print ("Numerator = ", num)
+den = sig . convolve (denA, denG)
+print ("Denominator = ", den)
+tout, yout = sig. step (( num , den), T = t)
 
 plt. figure ( figsize = (10 , 7))
-plt. subplot (2, 1, 1)
-plt. plot (t, yt(t))
-plt. grid ()
-plt. ylabel ('Hand Calculated')
-plt. title (' Step Responce y(t)')
-plt. subplot (2, 1, 2)
 plt. plot (tout, yout)
 plt. grid ()
-plt. ylabel ('Built-in')
+plt. ylabel ('y(t)')
 plt. xlabel ('t')
-
-#Task 3
-numY = [1, 6 , 12]
-denY = [1, 10 , 24, 0]
-R, P, K = sig.residue(numY , denY)
-print("R= ", R)
-print("P= ", P)
-print("K= ", K)
-
-
-
-
+plt. title ('Open-Loop Step Responce')
 
 
 
@@ -184,79 +204,105 @@ print("K= ", K)
 \end{lstlisting}
 
 \includegraphics{1.png}
-\includegraphics{output part1.png}
+\includegraphics{output 1.png}
 \section{Part 2 }
 
-In part 2, we were still working on the residue function to perform partial fraction expansion.  
+In part 2, we were working on transfer function closed loop, which is for the whole system.
+
+
+E(s)= Z(s)-Y(s)B(s)
+
+Z(s)=A(s)x(s)
+
+Y(s)= E(s)G(s)   ----Ei(s)= (Y(s))/(G(s))
+
+Y(s)/G(s) =A(s)X(s)-B(s)Y(s)
+
+Y(s)= A(s)G(s)x(s)-G(s)B(s)x(s)
+
+Y(s)+G(s)B(s)Y(s)= A(s)G(s)X(s)
+
+Y(s)[1+G(s)B(s)]= A(s)G(s)X(s)
+
+H(s)= (Y(s))/(x(s))=(A(s)G(s))/(1+G(s)B(s))
+=
+NumANumg/(DenAdenGnumG+denAnumGnumB)=NumAnumG/(denA[denG+numGnumB])
+
+Then for the next task, we will be using sig.convolve and sig.tf2zpk to get the zeros for the poles. 
+
+Task 3:  from task 2, The closed loop system is stable. Because all poles locate at the left side of s-plane
+
+task4: We were asked to plot the closed transfer function by using scipy.signal.step(). Which as we can see from the plot that it is stable.
+Task5: The results from task 4 support the answer of task 3. From the figure, it is shown that the response is stable and convergent to a specific value.
 
 \begin{lstlisting}[language=Python]
 
 #Part 2
-#Task 1
-numY2 = 25250
-denY2 = [1, 18, 218, 2036, 9085, 25250, 0]
-R2, P2, K2 = sig.residue(numY2 , denY2)
-print("R2= ", R2)
-print("P2= ", P2)
-print("K2= ", K2)
-
 #Task 2
-t = np. arange (0, 4.5 + steps , steps ) 
-L = len(R2) 
-y2 = np. zeros(t. shape)
-for i in range (L):
-    MAG_R = np.abs(R2[i])
-    Ang_R = np.angle(R2[i])
-    Real_P = P2[i].real
-    Img_P = P2[i].imag
-    y2 += MAG_R * np.exp(Real_P*t) * np.cos(Img_P*t + Ang_R) *step(t)
+num2 = sig . convolve (numA, numG)
+print ("Numerator2 = ", num2)
+den2 = sig . convolve (denA, denG + np.convolve(numG, numB))
+print ("Denominator2 = ", den2)
 
-#Task 3
-numH2 = 25250
-denH2 = [1, 18, 218, 2036, 9085, 25250]
-tout2, yout2 = sig. step (( numH2 , denH2), T = t)
+Z2, P2, K2 = sig.tf2zpk(num2, den2)
+
+print("Poles of H(S)= ", P2)
+print("Zeros of H(S)= ", Z2)
+
+#Task 4
+tout2, yout2 = sig. step (( num2 , den2), T = t)
 
 plt. figure ( figsize = (10 , 7))
-plt. subplot (2, 1, 1)
-plt. plot (t, y2)
-plt. grid ()
-plt. ylabel ('Hand Calculated')
-plt. title (' Step Responce y(t)')
-plt. subplot (2, 1, 2)
 plt. plot (tout2, yout2)
 plt. grid ()
-plt. ylabel ('Built-in')
+plt. ylabel ('y(t)')
 plt. xlabel ('t')
+plt. title ('Closed-Loop Step Responce')
 
 plt. show ()
-
 
 \end{lstlisting}
 
 \includegraphics{2.png}
-\includegraphics{output part2.png}
+
 
 
 
 
 \section{Questions}
-1. For a non-complex pole-residue term, you can still use the cosine method, explain why this
-works.
 
-2. Leave any feedback on the clarity of the expectations, instructions, and deliverables. 
+1. In Part 1 Task 5, why does convolving the factored terms using scipy.signal.convolve()
+result in the expanded form of the numerator and denominator? Would this work with your
+user-defined convolution function from Lab 3? Why or why not?
 
-Q1. for non-complex residue, we will get the magnitude and the angle. The magnitude will be positive and for the angle we have two options. The angle 0 for positive number, and angle 180 for negative number. However for cos method, cos zero will be positive and cos 180 will be negative.
-for non-complex pole, we will get the real and imaginary parts. The real part will be the non-complex pole but the imaginary part will be zero and cos zero equal 1. Therefore, non-complex pole residue can be obtain by using cos method.
+We used the convelt function to get the numerator and denominator in expanded form.  Yes, it will work because it is same idea with signal convolve
 
-overall, the lab was clear enough and easy to work with. 
+2. Discuss the difference between the open- and closed-loop systems from Part 1 and Part 2.How does stability differ for each case, and why?
+
+For the open loop, it does not has output feedback however the closed loop has a feedback as well as more stability. In part 1, the open loop was unstable but the second part was stable.  
+
+3.What is the difference between scipy.signal.residue() used in Lab 6 and
+scipy.signal.tf2zpk() used in this lab?
+
+the purpose of using scipy.signal.residue() is to get partial fraction expansions, however the scipy.signal.tf2zpk() which is to extract results  poles and zeros.
+
+4. Is it possible for an open-loop system to be stable? What about for a closed-loop system to
+be unstable? Explain how or how not for each.
+
+Yes, it is possible for an open-loop system to be stable if all poles left side of s-plane. For the closed-loop system, it is still can be unstable if the poles at the right hand side.
+
+5. Leave any feedback on the clarity/usefulness of the purpose, deliverables, and expectations
+for this lab.
+
 
 
 
 
 \section{conclusion}
 
-
-In this lab, we learned how to use the residue function built in python. At the beginning of this lab, we plotted step response for the pre-lab system then we used step built in function for the same system as the pre-lab, also we make sure the plot we had in task 1 is same as task 2. After that, we used the residue function to find the partial fraction expansion and we check that the values we obtain in pre-lab are the same as the values we obtain by the residue function. Next, we used the residue function to get the partial fraction expansion for a complex system. Then we used these values to plot the step response for the complex system by using cos method. Finally, we used the step response to check the plot of the step response for task 2, and we ensure that the two plots are the same.
+In this lab, we were working in analysing of plot diagram. Firstly, we extracted poles with zeros by hand  for G(s), A(s) and H(s) then after that we used python in order to compare our result for the hand part. After that we worked to get the transfer function for the open loop and analysis has been made to check stability which was unstable. Also we used function convolve in order to get Num and Den in the expanded form. After that we plotted by using the step response which conformed us that the system is not stable. 
+Then, we begun working on the closed loop system which we found its transfer function for the block diagram system that was given in the lab.
+We used convolve function and tf2zpk function and we had the Num/Den as well as the poles and the zeros. Then We made analysis for the closed loop function and we found out that all the poles are in the left hand side, so our closed loop is stable. Also, we used the function step to get the step response for the closed loop system and we found out based on the figure, our system is stable which support our analysis. 
 
 \newpage
 
