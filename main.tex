@@ -43,11 +43,11 @@
 
 \setmarginsrb{3 cm}{2.5 cm}{3 cm}{2.5 cm}{1 cm}{1.5 cm}{1 cm}{1.5 cm}
 
-\title{Lab7}								
+\title{Lab 8}								
 % Title
 \author{ Shujaea Aldousari}						
 % Author
-\date{Oct 20, 2021}
+\date{Oct 26, 2021}
 % Date
 
 \makeatletter
@@ -71,7 +71,7 @@
     \vspace*{0.5 cm}
    % \includegraphics[scale = 0.075]{bsulogo.png}\\[1.0 cm]	% University Logo
 \begin{center}    \textsc{\Large   ECE 351 - Section 52 \# }\\[2.0 cm]	\end{center}% University of Idaho
-	\textsc{\Large Lab 7 Report  }\\[0.5 cm]				% Course Code
+	\textsc{\Large Lab 8 Report  }\\[0.5 cm]				% Course Code
 	\rule{\linewidth}{0.2 mm} \\[0.4 cm]
 	{ \huge \bfseries \thetitle}\\
 	\rule{\linewidth}{0.2 mm} \\[1.5 cm]
@@ -109,94 +109,101 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \renewcommand{\thesection}{\arabic{section}}
 \section{Introduction}
+
+In this lab, we learned how to Fourier Series to approximate periodic time-domain signals.
  
 
-The main purpose of this lab is to be familiar with Laplace-domain block diagrams and use the factored form of the transfer
-function to judge system stability. During this lab, we had to work and solve by hand and compare it with the work that's been done using Python. 
+
 
 
 
 
 \section{Part 1}
-\begin{itemize1}
-    \item//
-    
-    In the first task, We found the poles and the zeros at s1=8, s2=-2 and s3=-4. Then, for zeros it is resulted at z1=-9 with the following equations.
 
-$G(s)= (s+9)/(s^2-6s-16)(s+4))= ((s+9))/((s-8)(s+2)(s+4))
-
- A(s)= (s+4)/((s^2+4s+3))=  (s+4)/((s+1)(s+3))
-
- $B(s)= s2+26s+168=(s+12)(s+14)
-\end{itemize1}
-
-\begin{itemize2}
-    \item//
-For the next task, we were asked to get and Analyze the block diagram and perform it by using  Python. After that, we checked the poles and the zeros which they were the same.
-
-For task 3, The open loop system has no feedback, so it will be 
-
- H(s) = (Y(s))/(X(s))=A(s).G(s)
-= ((s+4))/((s+1)(s+3))  .((s+9))/((s-8)(s+6)(s+2))
-
-Task 4: The open loop system is not stable because it has a pole at the right side of s-plane.(s=8)
-
-
-In task 5, we were asked to plot the step response of the open-loop transfer function by using scipy.signal.convolve() which answers the next task after plotting it. After the plot, we can see that the result from the previous task support the answer of task 4. From the figure, it is showing that the step response is increasing with time and there is no limit for this increasing. Hence, the response may reach infinity. so, the system is not stable.
-\end{itemize2}
+In the first part, we were asked to Input the expressions for ak and bk into Spyder. With The help of the pre-lab, we were able to get the numbers in Python. After that, we plotted the signal for the square wave When the Numbers of N changes. As long as N increases, we will have more accuracy.
 
     
-
-
-
-
-
-
 
 
 
 \begin{lstlisting}[language=Python]
 
-
 import numpy as np
-import matplotlib . pyplot as plt
-import scipy . signal as sig
+import matplotlib.pyplot as plt
 
 steps = 1e-4 # Define step size
-t = np. arange (0, 10 + steps , steps ) # Add a step size to make sure the
+t = np. arange (0, 20 + steps , steps ) 
 
-#Part 1
-#Task 2
-numG = [1,9]
-denG = [1,-2,-40,-64]
-ZG, PG, KG = sig.tf2zpk(numG, denG)
+#Task 1
+a = np.zeros((4, 1))
+b = np.zeros((4, 1))
 
-numA = [1,4]
-denA = [1,4,3]
-ZA, PA, KA = sig.tf2zpk(numA, denA)
+for k in np.arange(1, 4):
+    b[k] = 2* (1-np.cos(k*np.pi))/(k*np.pi)
+    
+print('a0 = ', a[0])
+print('a1 = ', a[1])
+print('b1 = ', b[1])
+print('b2 = ', b[2])
+print('b3 = ', b[3])
 
-numB = [1, 26, 168]
-ZB = np.roots(numB)
+#Task2
+# user defined function
+def FS(N, T, t): 
+    y = np. zeros (t. shape ) 
+    for k in np.arange(1, N+1):
+        b =  2*(1-np.cos(k*np.pi))/(k*np.pi)
+        S = b*np.sin(k*2*np.pi*t/T)
+        y += S
+    return y 
+T = 8
 
-print("Poles of G= ", PG)
-print("Zeros of G= ", ZG)
-print("Poles of A= ", PA)
-print("Zeros of A= ", ZA)
-print("Zeros of B= ", ZB)
+X1=FS(1, T, t)
 
-#Task 5
-num = sig . convolve (numG, numA)
-print ("Numerator = ", num)
-den = sig . convolve (denA, denG)
-print ("Denominator = ", den)
-tout, yout = sig. step (( num , den), T = t)
+X3=FS(3, T, t)
+
+X15=FS(15, T, t)
+
+X50=FS(50, T, t)
+
+X150=FS(150, T, t)
+
+X1500= FS(1500, T, t)
 
 plt. figure ( figsize = (10 , 7))
-plt. plot (tout, yout)
+plt. subplot (3, 1, 1)
+plt. plot (t, X1)
 plt. grid ()
-plt. ylabel ('y(t)')
+plt. ylabel ('x1(t)')
+plt. title (' Fourier Series Approximation of a Square Wave')
+plt. subplot (3, 1, 2)
+plt. plot (t, X3)
+plt. grid ()
+plt. ylabel ('X3(t)')
+plt. subplot (3, 1, 3)
+plt. plot (t, X15)
+plt. grid ()
+plt. ylabel ('X15(t)')
 plt. xlabel ('t')
-plt. title ('Open-Loop Step Responce')
+
+plt. figure ( figsize = (10 , 7))
+plt. subplot (3, 1, 1)
+plt. plot (t, X50)
+plt. grid ()
+plt. ylabel ('x50(t)')
+plt. title (' Fourier Series Approximation of a Square Wave')
+plt. subplot (3, 1, 2)
+plt. plot (t, X150)
+plt. grid ()
+plt. ylabel ('X150(t)')
+plt. subplot (3, 1, 3)
+plt. plot (t, X1500)
+plt. grid ()
+plt. ylabel ('X1500(t)')
+plt. xlabel ('t')
+
+plt. show ()
+
 
 
 
@@ -204,105 +211,47 @@ plt. title ('Open-Loop Step Responce')
 \end{lstlisting}
 
 \includegraphics{1.png}
-\includegraphics{output 1.png}
-\section{Part 2 }
-
-In part 2, we were working on transfer function closed loop, which is for the whole system.
-
-
-E(s)= Z(s)-Y(s)B(s)
-
-Z(s)=A(s)x(s)
-
-Y(s)= E(s)G(s)   ----Ei(s)= (Y(s))/(G(s))
-
-Y(s)/G(s) =A(s)X(s)-B(s)Y(s)
-
-Y(s)= A(s)G(s)x(s)-G(s)B(s)x(s)
-
-Y(s)+G(s)B(s)Y(s)= A(s)G(s)X(s)
-
-Y(s)[1+G(s)B(s)]= A(s)G(s)X(s)
-
-H(s)= (Y(s))/(x(s))=(A(s)G(s))/(1+G(s)B(s))
-=
-NumANumg/(DenAdenGnumG+denAnumGnumB)=NumAnumG/(denA[denG+numGnumB])
-
-Then for the next task, we will be using sig.convolve and sig.tf2zpk to get the zeros for the poles. 
-
-Task 3:  from task 2, The closed loop system is stable. Because all poles locate at the left side of s-plane
-
-task4: We were asked to plot the closed transfer function by using scipy.signal.step(). Which as we can see from the plot that it is stable.
-Task5: The results from task 4 support the answer of task 3. From the figure, it is shown that the response is stable and convergent to a specific value.
-
-\begin{lstlisting}[language=Python]
-
-#Part 2
-#Task 2
-num2 = sig . convolve (numA, numG)
-print ("Numerator2 = ", num2)
-den2 = sig . convolve (denA, denG + np.convolve(numG, numB))
-print ("Denominator2 = ", den2)
-
-Z2, P2, K2 = sig.tf2zpk(num2, den2)
-
-print("Poles of H(S)= ", P2)
-print("Zeros of H(S)= ", Z2)
-
-#Task 4
-tout2, yout2 = sig. step (( num2 , den2), T = t)
-
-plt. figure ( figsize = (10 , 7))
-plt. plot (tout2, yout2)
-plt. grid ()
-plt. ylabel ('y(t)')
-plt. xlabel ('t')
-plt. title ('Closed-Loop Step Responce')
-
-plt. show ()
-
-\end{lstlisting}
-
 \includegraphics{2.png}
+\includegraphics{3.png}
+
+
 
 
 
 
 
 \section{Questions}
+1.Is x(t) an even or an odd function? Explain why.
 
-1. In Part 1 Task 5, why does convolving the factored terms using scipy.signal.convolve()
-result in the expanded form of the numerator and denominator? Would this work with your
-user-defined convolution function from Lab 3? Why or why not?
+	Since x(-t) equal -x(t) then the function id Odd, also a= 0 and b has values
 
-We used the convelt function to get the numerator and denominator in expanded form.  Yes, it will work because it is same idea with signal convolve
+2. Based on your results from Task 1, what do you expect the values of a2, a3, . . . , an to be?
+Why?
 
-2. Discuss the difference between the open- and closed-loop systems from Part 1 and Part 2.How does stability differ for each case, and why?
+I expected to be zero because x(t) is an odd function.
 
-For the open loop, it does not has output feedback however the closed loop has a feedback as well as more stability. In part 1, the open loop was unstable but the second part was stable.  
+3. How does the approximation of the square wave change as the value of N increases? In what
+way does the Fourier series struggle to approximate the square wave?
 
-3.What is the difference between scipy.signal.residue() used in Lab 6 and
-scipy.signal.tf2zpk() used in this lab?
+As long as N increases, we will have more accuracy and obvious.
 
-the purpose of using scipy.signal.residue() is to get partial fraction expansions, however the scipy.signal.tf2zpk() which is to extract results  poles and zeros.
+4. What is occurring mathematically in the Fourier series summation as the value of N increases?
 
-4. Is it possible for an open-loop system to be stable? What about for a closed-loop system to
-be unstable? Explain how or how not for each.
+The value of x(t) and its figure will be close to the signal square wave.
 
-Yes, it is possible for an open-loop system to be stable if all poles left side of s-plane. For the closed-loop system, it is still can be unstable if the poles at the right hand side.
 
-5. Leave any feedback on the clarity/usefulness of the purpose, deliverables, and expectations
-for this lab.
+5. Leave any feedback on the clarity of lab tasks, expectations, and deliverables
+
+Overall, the lab was very clear.
+
 
 
 
 
 
 \section{conclusion}
+In this lab, we learned about the Fourier Series approximation. We applied Fourier Series. Square wave. Firstly, We. Found the expiration from the  pre-lab and then we display the values of a & b using python and we checked the result. After that, we use the determine and plot the Fourier Series of square wave for different values of  N we found that with the Increase of N, the Fourier Series and the figure will be more accurate and near to the square wave. 
 
-In this lab, we were working in analysing of plot diagram. Firstly, we extracted poles with zeros by hand  for G(s), A(s) and H(s) then after that we used python in order to compare our result for the hand part. After that we worked to get the transfer function for the open loop and analysis has been made to check stability which was unstable. Also we used function convolve in order to get Num and Den in the expanded form. After that we plotted by using the step response which conformed us that the system is not stable. 
-Then, we begun working on the closed loop system which we found its transfer function for the block diagram system that was given in the lab.
-We used convolve function and tf2zpk function and we had the Num/Den as well as the poles and the zeros. Then We made analysis for the closed loop function and we found out that all the poles are in the left hand side, so our closed loop is stable. Also, we used the function step to get the step response for the closed loop system and we found out based on the figure, our system is stable which support our analysis. 
 
 \newpage
 
