@@ -43,11 +43,11 @@
 
 \setmarginsrb{3 cm}{2.5 cm}{3 cm}{2.5 cm}{1 cm}{1.5 cm}{1 cm}{1.5 cm}
 
-\title{Lab 9}								
+\title{Lab 10}								
 % Title
 \author{ Shujaea Aldousari}						
 % Author
-\date{Nov 3, 2021}
+\date{Nov 10, 2021}
 % Date
 
 \makeatletter
@@ -71,7 +71,7 @@
     \vspace*{0.5 cm}
    % \includegraphics[scale = 0.075]{bsulogo.png}\\[1.0 cm]	% University Logo
 \begin{center}    \textsc{\Large   ECE 351 - Section 52 \# }\\[2.0 cm]	\end{center}% University of Idaho
-	\textsc{\Large Lab 9 Report  }\\[0.5 cm]				% Course Code
+	\textsc{\Large Lab 10 Report  }\\[0.5 cm]				% Course Code
 	\rule{\linewidth}{0.2 mm} \\[0.4 cm]
 	{ \huge \bfseries \thetitle}\\
 	\rule{\linewidth}{0.2 mm} \\[1.5 cm]
@@ -110,7 +110,13 @@
 \renewcommand{\thesection}{\arabic{section}}
 \section{Introduction}
 
-In this lab, we were working on fast Fourier transforms by using Python. After creating our user-defined function for fast Fourier transforms , we were able to analyze the plots for the signal.
+In this lab, we were working on Frequency response.  The main idea of this lab is to be familiar with frequency response tools and Bode plots using Python.  Before the lab, we were working on the pre-lab which we used the magnitude formula and phase formula As shown below 
+
+
+\\
+$$H(s) = \frac{\frac{s}{RC}}{s^2+\frac{s}{RC}+\frac{1}{LC}}$$
+$$|H(j\omega)| = \frac{\frac{\omega}{RC}}{\sqrt{(\frac{1}{LC}-\omega^2)^2+(\frac{\omega}{RC})^2}}$$
+$$\angle H(j\omega) = 90- \ tan^-1(\frac{\frac{\omega}{RC}}{\frac{1}{LC}-\omega^2})$$
 
 
 
@@ -119,7 +125,7 @@ In this lab, we were working on fast Fourier transforms by using Python. After c
 
 \section{Part 1}
 
-In the first part, We. were given the code which helped us during the lab, however, we had to fix it and add more details. We created our user defined function to apply fast Fourier transforms for the signal, then we had to work with the first signal until the last task.
+In part one, we were asked to get and plot the equations that we got from the pre-lab and use Python in order to develop it. In the next task, we were asked to use scipy.signal.bode to plot the magnitude and phase frequency response for the RLC transfer function.  After that, we got the plots out of the bode plot and compared them with the built-in function. In the last task, we were working with the Control Package. The example code was given in the lab Manuel which helped us to plot the bode plot by using the frequency domain.
 
     
 
@@ -128,43 +134,44 @@ In the first part, We. were given the code which helped us during the lab, howev
 
 
 
-\includegraphics[scale=0.5]{1.png} 
-\includegraphics[scale=0.5]{2.png} 
-\includegraphics[scale=0.5]{3.png}
-\includegraphics[scale=0.5]{4.png}
-\includegraphics[scale=0.5]{5.png}
-\includegraphics[scale=0.5]{6.png}
-\includegraphics[scale=0.5]{7.png} 
+\includegraphics[scale=0.5]{Figure 1.png} 
+\includegraphics[scale=0.5]{Figure 2.png} 
+\includegraphics[scale=0.5]{Figure 3.png} 
   caption{Caption}
 
   end{figure}﻿
 
 
+\section{part 2}
 
+In the last part of this lab, we were asked to Use the frequency response model developed in Part 1 as a filter for a multi-band input signal. First, we had to plot the given x(t) function. After that We were asked to use the Z-domain for the transfer function H(s) that we got by using scipy.signal.bilinear(). Finally, we used scipy.signal.lfilter() to pass the input signal x(t) through the filter, after that we plotted y(t).
 
-
+\includegraphics[scale=0.5]{Figure 4.png} 
+\includegraphics[scale=0.5]{Figure 5.png} 
 
 
 \section{Questions}
-What happens if fs is lower? If it is higher? fs in your report must span a few orders of
-magnitude.
 
-if ffs lower, there will be interference's in the signal. However, if it is higher, it will be more accurate.
+1. Explain how the filter and filtered output in Part 2 makes sense given the Bode plots from
+Part 1. Discuss how the filter modifies specific frequency bands, in Hz.
 
-2. What difference does eliminating the small phase magnitudes make?
+According to bode plot in task 3 part 1, we can see that the center of the frequency is around 3000 Hz and the input signal has 3 frequencies which they were 100, 3024 and 50,000 Hz, We can see that the frequency at 100 Hz is much smaller than 100 Hz as well as the 50,000 Hz is much bigger than 3000 Hz  So they won't pass expect for the 3024 Hz because it is very close to the center frequency.
 
-it will make it clearer, and we can specify the phasor
+2. Discuss the purpose and workings of
+scipy.signal.bilinear() and scipy.signal.lfilter().
 
-3. Verify your results from Tasks 1 and 2 using the Fourier transforms of cosine and sine. Explain why your results are correct. You will need the transforms in terms of Hz, not rad/s.
-For example, the Fourier transform of cosine (in Hz) is:
-F {cos (2πf0t)} =
-1
-2
-[δ (f − f0) + δ (f + f0)]
+The use of scipy.signal.bilinear() is to conver the transfer function into z-domain
 
-Based on task 1 and 2, we got two inputs which they agree with the result to get two inputs in the frequency f0
+The use of scipy.signal.lfilter() is to pass the input signal through the filter
 
-4. Leave any feedback on the clarity of lab tasks, expectations, and deliverables
+3. What happens if you use a different sampling frequency in scipy.signal.bilinear() than
+you used for the time-domain signal?
+
+The shape of x(t) will be different, also the use of the filter will be different.
+
+4. Leave any feedback on the clarity of lab tasks, expectations, and deliverables.
+
+Overall, the lab was clear.
 
 
 
@@ -172,9 +179,10 @@ Based on task 1 and 2, we got two inputs which they agree with the result to get
 
 
 \section{conclusion}
-In this lab, we learned about the fast Fourier Series transform . At the very begging, we were asked to  create our user defined function to apply fast Fourier transforms for the signal. For the first signal, it was cos(2*pi) which we plotted the signal and the magnitude with out limit and with limit frequency. Also we plotted the phase for the same signal with limit frequency and with out limit frequency. Repeatedly, we did the same thing for the 5sin(2πt) as well as 2cos((2π · 2t) − 2) + sin2
-((2π · 6t) + 3). However, in task 4, it's found that the phase plot was not clear so, we editted the fft to make the phase plot be clear. The way it has been edited is by making the phase equal to zero when the magnitude is smaller than 1e-10. After that we ran the code for the three function.
-For task 5, we did fast Fourier transforms to the square wave that we did in the previous lab for N = 8 and T = 8. At the end, this lab was a great lab for dealing with fast Fourier transforms with different signals.
+
+In this lab, we deal with RLC circuit and we deal with frequency response. In the beginning, we used Magnitude formula as well as the phase formula from the pre- lab and plotted the Magnitude and the phase with radian frequency. Then, we used the built in function signal.bode to plot the Magnitude and the phase. After that, we used control function to bode plot the frequency response of the transfer function with respect to Hz. In the second part, we deal with input signal x(t), we plotted x(t) the input signal. Then, we used signal.bilinear to convert the transfer function to z-domain. Finally, we used signal.lfilter to pass the input signal through the filter to get the output. At the end, we plotted output signal y(t) with respect to time. The lab focuses on the frequency response and how we can deal with the filter and bode plot.
+
+
 
 
 \newpage
