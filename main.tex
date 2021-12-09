@@ -43,11 +43,11 @@
 
 \setmarginsrb{3 cm}{2.5 cm}{3 cm}{2.5 cm}{1 cm}{1.5 cm}{1 cm}{1.5 cm}
 
-\title{Lab 11}								
+\title{Final Project}								
 % Title
 \author{ Shujaea Aldousari}						
 % Author
-\date{Nov 17, 2021}
+\date{Dec, 9, 2021}
 % Date
 
 \makeatletter
@@ -71,7 +71,7 @@
     \vspace*{0.5 cm}
    % \includegraphics[scale = 0.075]{bsulogo.png}\\[1.0 cm]	% University Logo
 \begin{center}    \textsc{\Large   ECE 351 - Section 52 \# }\\[2.0 cm]	\end{center}% University of Idaho
-	\textsc{\Large Lab 11 Report  }\\[0.5 cm]				% Course Code
+	\textsc{\Large  Final Project Report  }\\[0.5 cm]				% Course Code
 	\rule{\linewidth}{0.2 mm} \\[0.4 cm]
 	{ \huge \bfseries \thetitle}\\
 	\rule{\linewidth}{0.2 mm} \\[1.5 cm]
@@ -110,152 +110,110 @@
 \renewcommand{\thesection}{\arabic{section}}
 \section{Introduction}
 
-In this lab, we were working on Analyzing a discrete system using Python’s built-in functions and a function developed by Christopher Felton. Below are equations that we applied and solved in order to work to keep working on the lab.
+In the final project, it is about working with an aircraft company. The signal contained with AC voltage wave form was given in range of 1.8kHz≤ f ≤ 2.0kHz. Also, the positioning system shares a ground connection with a switching amplifier, It is predicted that considerable noise at high frequency.  The input signal is affected by low frequency noise due to a small vibration that are generated from the building ventilation.
 
 
-Task 1
-$$y[K]-10yy[k-1]+16y[k-2]=2x[k]-40x[k-1]$$
-
-Apply Z- transform
-$$Y(z)-10^-1Y(z)+16z^-2Y(z)=2x(z)-40z^-1x(z)$$
-$$Y(z)[1-10z^-1+16z^-2]=x(z)[2-40z^-1]$$
-$$H(z)=\frac{Y(z)}{X(z)}=\frac{(2-40z^-1)}{1-10z^-1+16z^-2}$$
-$$H(z)=\frac{Y(z)}{X(z)}=\frac{2z(z-20)}{z^2-10z+16}$$
-$$=\frac{(2z^2-40z)}{z^2-10z+16}$$
-
-Task 2 
-$$H(z) =\frac{2z(z-20)}{z^2-10z+16}$$
-$$\frac{(H(z)}{z}= \frac{2(z-20)}{z^2-10z+16}= \frac{2(z-20)}{(z-2)(z-8)}= \frac{(A)}{z-2}= \frac{(B)}{z-8}$$
 
 
-$$A= 6 $$
-$$B= -4 $$
-$$\frac{(H(z)}{z}= \frac{(6)}{z-2} + \frac{(-4)}{(z-8)}$$
-$$\frac{(H(z)}{z}= \frac{(6z)}{z-2} + \frac{(-4z)}{(z-8)}$$
-Apply Inversve z-transform
-$$h(k)=[6*2^k-4*8^k]u[k]$$
 
 
-Task 3-5:
-We were asked to use Use scipy.signal.residuez() into python. So, we had to check for the response function, Also to get the poles and the residues for the partial fraction expansion of H(z). In the next task, we were given an example for the zplane() function that been used so we can get the poles and zeros plot for H(z). Finaly, we were asked in the last task to plot the magnatitue and the phase for our H(z) by using scipy.signal.freqz().
+\section{equation}
+We had to use the transfer function H(s)
+$$H(s)=\frac{(R/l)*s}{s^2+{(R/L)s}+{(1/LC)}} $$
+
+Then we choose the cut-off frequency $$Fc1=1.6kHz$$
+and $$Fc2= 2.2kHz
+
+Wc1= 2piFc1= 3.2x10^3 pi rad/s
+
+$$Wc2= 2piFc1= 4.4x10 pi rad/s
+
+$$B= Wc2-Wc1= 2piFc1= 1.2x10^3 pi rad/s $$
+
+choose R= 3k
+$$B= \frac{R}{L}$$
+
+$$ L = \frac{R}{B} = \frac{3x10^3}{1.2x10^3}
+
+$$= 0.84
+
+$$Wo= \sqrt{Wc1*Wc2} = 3.75x10^3 pi Rad/s
+
+$$Wo= \frac{1}{\sqrt{Lc}}$$
+
+$$Wo^2= \frac{1}{LC}$$
+
+$$ C = \frac{1}{LWo^2}= $$
+
+$$ \frac{1}{(.8)(3.75x10^3 PI)^2} = 9 nF$$
+
+so, we will have R = 3K ohm
+
+ L= 0.8 H 
+
+C= 9nF
+
+
+
+$$
+
+
+\section{Methodology}
+
+
+To start off, we first list all the library needed for this lab which contains most of the things that we used during this course. Then we had to apply and use our user defined fft function that was on one of the previous labs then use it in this project. FFT function is used to transform the signal from time domain to frequncey domain. This will result us with frequency and magnitudes along with the signal which was the main idea of the first task is to read the Noisy Signal and use FFT function to do frequency analysis by plotting it with different ranges of frequencies. Secondly, In the next task we were asked to design analog filter and remove the low frequency noise and high frequency noise. After having the equations that listed above to find the components values (R,L,C). I can work in getting the plots for bode plots of the filter, then I changed the transfer function from S domain to Z domain to apply the design filter with the input sensor signal. In order to get the filterization, we have to use the sig.billinar which is the reason why we changed the function into Z-domain. Finally, We used FFT function to transform the filter signal to frequency domain and plot the signal with different range of frequency. 
+
+
 
 
 
 \section{Result}
-\begin{lstlisting}[language=Python]
-
-import numpy as np
-import scipy.signal as sig
-import matplotlib.pyplot as plt
-
-
-def zplane(b, a, filename = None):
-    """ Plot the complex z- plane given a transfer function """
-    
-    from matplotlib import patches
-    
-    # get a figure / plot
-    ax = plt.subplot(1, 1, 1)
-    plt.title('Figure 1: Pole-Zero Plot for H(z)')
-    
-    # create the unit circle
-    uc = patches.Circle((0, 0), radius = 1, fill = False, color = 'black', 
-                        ls = 'dashed')
-    ax.add_patch(uc)
-    
-    # the coefficients are less than 1 , normalize the coefficients
-    if np.max(b) > 1:
-        kn = np.max(b)
-        b = np.array(b)/float(kn)
-    else:
-        kn = 1
-    
-    if np.max(a) > 1:
-        kd = np.max(a)
-        a = np.array(a)/float(kd)
-    else:
-        kd = 1
-    
-    # get the poles and zeros
-    p = np.roots(a)
-    z = np.roots(b)
-    k = kn/float(kd)
-    
-    # plot the zeros and set marker properties
-    t1 = plt.plot(z.real, z.imag, 'o', ms = 10, label = 'Zeros')
-    plt.setp(t1, markersize = 10.0, markeredgewidth = 1.0)
-    
-    # plot the poles and set marker properties
-    t2 = plt.plot(p.real, p.imag, 'x', ms = 10, label = 'Poles')
-    plt.setp(t2, markersize = 12.0, markeredgewidth = 3.0)
-    
-    ax.spines['left'].set_position('center')
-    ax.spines['bottom'].set_position('center')
-    ax.spines['right'].set_visible(False)
-    ax.spines['top'].set_visible(False)
-    
-    plt.legend()
-    
-    # set the ticks
-    
-    # r = 1.5; plt. axis ( ’ scaled ’); plt. axis ([ -r, r, -r, r])
-    # ticks = [ -1 , -.5 , .5 , 1]; plt. xticks ( ticks ); plt. yticks ( ticks )
-    
-    if filename is None:
-        plt.show()
-    else:
-        plt.savefig(filename)
-    
-    return z, p, k
-
-#Task 3 H(Z)/Z
-NumH = [2, -40]
-DenH = [1, -10, 16]
-
-R, P, K = sig.residuez(NumH, DenH)
-
-print("H(Z)/Z: ")
-print("Residue= ", R)
-print("Poles= ", P)
-print("K= ", K)
-
-#Task 4 H(Z)
-NumHZ = [2, -40, 0]
-DenHZ = [1, -10, 16]
-Z, P, K = zplane(NumHZ, DenHZ)
-print("H(Z) ")
-print("Zeros= ", Z)
-print("Poles= ", P)
-print("K= ", K)
-
-#Task 5
-w, H = sig.freqz(NumHZ, DenHZ, whole = True)
-f = w/(2*np.pi)
-Hmag = np.absolute(H)
-HmagDB = 20*np.log10(Hmag)
-Hphase = np.angle(H)*180/np.pi
-
-plt.figure(figsize = (7, 5))
-plt.subplot(2, 1, 1)
-plt.title('Frequency Responce')
-plt.plot(f, HmagDB)
-plt.grid()
-plt.ylabel('Mag (dB)')
-
-plt.subplot(2, 1, 2)
-plt.plot(f, Hphase)
-plt.grid()
-plt.ylabel('Phase (deg)')
-plt.xlabel('f (Hz)')
-
-plt.show()
-
-\end{lstlisting}
 
 \includegraphics[scale=0.5]{1.png} 
+
+
 \includegraphics[scale=0.5]{2.png} 
+
+
 \includegraphics[scale=0.5]{3.png} 
+
+
 \includegraphics[scale=0.5]{4.png} 
+
+\includegraphics[scale=0.5]{5.png} 
+
+
+\includegraphics[scale=0.5]{6.png} 
+
+
+\includegraphics[scale=0.5]{7.png} 
+
+
+\includegraphics[scale=0.5]{8.png} 
+
+\includegraphics[scale=0.5]{9.png}
+
+
+\includegraphics[scale=0.5]{10.png} 
+
+
+\includegraphics[scale=0.5]{11.png} 
+
+The values that we read is not zero, it is between 1800 Hz and 2000 Hz
+
+\includegraphics[scale=0.5]{12.png} 
+
+This is the low frequency signal that contains small frequency noise.
+
+\includegraphics[scale=0.5]{13.png} 
+
+
+\includegraphics[scale=0.5]{14.png} 
+
+
+
+
+
 
 
 
@@ -267,23 +225,23 @@ plt.show()
 
 \section{Questions}
 
-Looking at the plot generated in Task 4, is H(z) stable? Explain why or why not.
+1.Earlier this semester, you were asked what you personally wanted to get out of taking this
+course. Do you feel like that personal goal was met? Why or why not?
 
-2. Leave any feedback on the clarity of lab tasks, expectations, and deliverables.
+Yes, I feel like I have reached my goals but I still need to have improves on my skills. 
 
+2. Please fill out the course feedback survey, I will read every word and very much appreciate
+the feedback.
 
-The poles are located at z = 2 and z = 8, and the region conversion does not contain the unit circle so the system is unstable
+I will do that.
 
+3. Good luck in the rest of your education and career!
 
-Overall, the lab was clear.
-
-
+Thank You Katie, and you too. Good luck for you.
 
 \section{conclusion}
 
-In this lab, We deal with Z-transform. At the beginning, we found the frequency response H(z) from the differential equation. In the second task, we used partial fraction expansion to find h(k). In the third task, we used function residuez built in by python to check and verify the result that we found. After that, we used Z-plane function to find zeros and plot them on z-plane. Finally, we used freqz function to plot the magnitude and the phase with respect to frequency. 
-
-
+At the beginning, we deal with position measurement sensor as well as low and high frequency noise. We had to build our skills that we developed into this project. Through out the project, we read the measure mt position then we have analyzed it at frequency domain. Then we have plotted it both in time domain and frequency domain. Then, we have designed RLC filter to eliminate the low frequency noise and high frequency noise to get the desired signals. 
 
 
 \newpage
